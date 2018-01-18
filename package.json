@@ -1,6 +1,6 @@
 {
   "name": "gruber-frontend",
-  "version": "0.1.2",
+  "version": "1.0.2",
   "private": true,
   "dependencies": {
     "react": "^16.2.0",
