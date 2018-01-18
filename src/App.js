@@ -9,7 +9,7 @@ class App extends Component {
     this.state = {
       from: undefined,
       to: undefined,
-      prices: undefined,
+      data: undefined,
     };
   }
 
@@ -19,6 +19,7 @@ class App extends Component {
 
   search(e) {
     e.preventDefault();
+    this.setState({ data: undefined });
     const { from, to } = this.state;
 
     const options = {
@@ -31,28 +32,61 @@ class App extends Component {
 
     request(options, (error, response, body) => {
       console.log({ error, response, body });
-      if (!error && response.statusCode === 200) {
-        for( let data of body ) {
-          data.name = conf.prefix + data.name;
-          data.value += conf.additional;
-          if( data.value < 0 ) data.value = 0;
-        }
-        this.setState({ prices: body });
-      }
+      if (!error && response.statusCode === 200)
+        this.setState({ data: body });
     });
   }
 
   render() {
     let resultPrices;
-    if( this.state.prices ) {
-      resultPrices = [ <h2>SELECT CAR</h2> ];
-      resultPrices.push( this.state.prices.map( data =>
+    let error = this.state.data && this.state.data.error;
+    if( error ) {
+      resultPrices = <h4>Error: {error}</h4>;
+    } else if( this.state.data ) {
+      const data = this.state.data;
+      resultPrices = [];
+      resultPrices.push( <h2>PRICE INFORMATION</h2> );
+      resultPrices.push(
         <div className="row">
           <div className="col-md-2">
-            { data.name }
+            Name
           </div>
           <div className="col-md-2">
-            { data.value || 'For Free!' }
+            Minimum price
+          </div>
+          <div className="col-md-2">
+            Estimate from
+          </div>
+          <div className="col-md-2">
+            Estimate to
+          </div>
+          <div className="col-md-2">
+            Currency
+          </div>
+          <div className="col-md-2">
+            Distance
+          </div>
+        </div>
+      );
+      resultPrices.push( data.prices.map( data =>
+        <div className="row">
+          <div className="col-md-2">
+            { data.localized_display_name }
+          </div>
+          <div className="col-md-2">
+            { data.minimum || 'For Free!' }
+          </div>
+          <div className="col-md-2">
+            { data.low_estimate || 'For Free!' }
+          </div>
+          <div className="col-md-2">
+            { data.high_estimate || 'For Free!' }
+          </div>
+          <div className="col-md-2">
+            { data.currency_code }
+          </div>
+          <div className="col-md-2">
+            { data.distance }
           </div>
         </div>
       ) );
@@ -69,7 +103,7 @@ class App extends Component {
                       ref="from"
                       className="form-control input-lg"
                       size="50"
-                      placeholder="From Address"
+                      placeholder="Start Address"
                       onChange={this.setValue.bind(this, 'from')}
                       required />
                 </div>
@@ -78,7 +112,7 @@ class App extends Component {
                       ref="to"
                       className="form-control input-lg"
                       size="50"
-                      placeholder="To Address"
+                      placeholder="Destination Address"
                       onChange={this.setValue.bind(this, 'to')}
                       required />
                 </div>
@@ -90,6 +124,14 @@ class App extends Component {
                     </button>
                 </div>
             </div>
+            { resultPrices && !error && <div className="row">
+                <div className="col-md-5">
+                  Start Address: <b>{this.state.data.from}</b>
+                </div>
+                <div className="col-md-5">
+                  Destination Address: <b>{this.state.data.to}</b>
+                </div>
+            </div> }
         </form>
         { resultPrices }
       </div>

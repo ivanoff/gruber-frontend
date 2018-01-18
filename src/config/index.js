@@ -10,7 +10,4 @@ for (let field of missedFields) {
   if (!config[ field ]) config[ field ] = {};
 }
 
-if (!config.prefix) config.prefix = '';
-if (!config.delta) config.delta = 0;
-
 module.exports = exports = config;
