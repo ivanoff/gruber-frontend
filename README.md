@@ -1,6 +1,6 @@
 # Gruber frontend
 
-### v.1.0.4
+### v.2.0.1
 
 ### Frontend for Gruber test task
 

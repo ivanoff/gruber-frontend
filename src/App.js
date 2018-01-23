@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { PowerSelect } from 'react-power-select';
 import 'font-awesome/css/font-awesome.min.css';
+import 'react-power-select/dist/react-power-select.css';
 const request = require('request');
 const conf = require('./config');
 
@@ -12,11 +14,30 @@ class App extends Component {
       to: undefined,
       data: undefined,
       waitSign: false,
+      searchAdress: [],
     };
   }
 
-  setValue(field, event) {
-    this.setState({ [field]: event.target.value });
+  handleChange = (...s) => {
+    this.setState({
+      [ s[0] ]: s[1].option
+    })
+  }
+
+  handleSearchAddress = (...opt) => {
+    const text = opt[ 1 ].select.searchTerm;
+    // if( !text || text.length % 3 !== 0 ) return;
+    const options = {
+      uri: ( conf.backend.url || 'http://localhost:3038' ) + '/search',
+      method: 'POST',
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      json: { text },
+    };
+    request(options, (error, response, body) => {
+      if( !error && body && Array.isArray( body ) )
+      this.setState({ searchAdress: body });
+    });
   }
 
   search(e) {
@@ -102,23 +123,28 @@ class App extends Component {
         <form onSubmit={this.search.bind(this)}>
             <div className="row">
                 <div className="col-md-5">
-                    <input
-                      name="from"
-                      ref="from"
-                      className="form-control input-lg"
-                      size="50"
-                      placeholder="Start Address"
-                      onChange={this.setValue.bind(this, 'from')}
-                      required />
+                  <PowerSelect
+                    ref="from"
+                    name="from"
+                    options={this.state.searchAdress}
+                    selected={this.state.from}
+                    onChange={this.handleChange.bind(this, "from")}
+                    onKeyDown={this.handleSearchAddress}
+                    className="input-lg"
+                    placeholder="Start Address"
+                  />
                 </div>
                 <div className="col-md-5">
-                    <input name="to"
-                      ref="to"
-                      className="form-control input-lg"
-                      size="50"
-                      placeholder="Destination Address"
-                      onChange={this.setValue.bind(this, 'to')}
-                      required />
+                  <PowerSelect
+                    ref="to"
+                    name="to"
+                    options={this.state.searchAdress}
+                    selected={this.state.to}
+                    onChange={this.handleChange.bind(this, "to")}
+                    onKeyDown={this.handleSearchAddress}
+                    className="input-lg"
+                    placeholder="Destination Address"
+                  />
                 </div>
                 <div className="col-md-2">
                     <button
