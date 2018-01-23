@@ -1,6 +1,6 @@
 {
   "name": "gruber-frontend",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "dependencies": {
     "font-awesome": "^4.7.0",

@@ -34,8 +34,11 @@ class App extends Component {
 
     request(options, (error, response, body) => {
       console.log({ error, response, body });
+      this.setState({ waitSign: false });
       if (!error && response.statusCode === 200)
-        this.setState({ data: body, waitSign: false });
+        this.setState({ data: body })
+      else
+        this.setState({ data: { error: error? error.message : body } })
     });
   }
 
