@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import 'font-awesome/css/font-awesome.min.css';
 const request = require('request');
 const conf = require('./config');
 
@@ -10,6 +11,7 @@ class App extends Component {
       from: undefined,
       to: undefined,
       data: undefined,
+      waitSign: false
     };
   }
 
@@ -19,7 +21,7 @@ class App extends Component {
 
   search(e) {
     e.preventDefault();
-    this.setState({ data: undefined });
+    this.setState({ data: undefined, waitSign: true });
     const { from, to } = this.state;
 
     const options = {
@@ -33,7 +35,7 @@ class App extends Component {
     request(options, (error, response, body) => {
       console.log({ error, response, body });
       if (!error && response.statusCode === 200)
-        this.setState({ data: body });
+        this.setState({ data: body, waitSign: false });
     });
   }
 
@@ -124,6 +126,7 @@ class App extends Component {
                     </button>
                 </div>
             </div>
+            { this.state.waitSign && <div><div className="fa fa-spinner fa-spin"></div> searching...</div> }
             { resultPrices && !error && <div className="row">
                 <div className="col-md-5">
                   Start Address: <b>{this.state.data.from}</b>
