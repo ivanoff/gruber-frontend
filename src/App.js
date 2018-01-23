@@ -11,7 +11,7 @@ class App extends Component {
       from: undefined,
       to: undefined,
       data: undefined,
-      waitSign: false
+      waitSign: false,
     };
   }
 
@@ -35,21 +35,21 @@ class App extends Component {
     request(options, (error, response, body) => {
       this.setState({ waitSign: false });
       if (!error && response.statusCode === 200)
-        this.setState({ data: body })
+        this.setState({ data: body });
       else
-        this.setState({ data: { error: error? error.message : body } })
+        this.setState({ data: { error: error ? error.message : body } });
     });
   }
 
   render() {
     let resultPrices;
     let error = this.state.data && this.state.data.error;
-    if( error ) {
+    if (error) {
       resultPrices = <h4>Error: {error}</h4>;
-    } else if( this.state.data ) {
+    } else if (this.state.data) {
       const data = this.state.data;
       resultPrices = [];
-      resultPrices.push( <h2>PRICE INFORMATION</h2> );
+      resultPrices.push(<h2>PRICE INFORMATION</h2>);
       resultPrices.push(
         <div className="row">
           <div className="col-md-2">
@@ -72,7 +72,7 @@ class App extends Component {
           </div>
         </div>
       );
-      resultPrices.push( data.prices.map( data =>
+      resultPrices.push(data.prices.map(data =>
         <div className="row">
           <div className="col-md-2">
             { data.localized_display_name }
@@ -93,7 +93,7 @@ class App extends Component {
             { data.distance }
           </div>
         </div>
-      ) );
+      ));
     }
 
     return (
@@ -128,7 +128,9 @@ class App extends Component {
                     </button>
                 </div>
             </div>
-            { this.state.waitSign && <div><div className="fa fa-spinner fa-spin"></div> searching...</div> }
+            { this.state.waitSign && <div>
+                <div className="fa fa-spinner fa-spin"></div>
+                searching...</div> }
             { resultPrices && !error && <div className="row">
                 <div className="col-md-5">
                   Start Address: <b>{this.state.data.from}</b>

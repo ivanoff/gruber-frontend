@@ -7,7 +7,7 @@ Object.assign(config, process.env.NODE_ENV === 'production' ? production : devel
 
 // set defaults
 for (let field of missedFields) {
-  if (!config[ field ]) config[ field ] = {};
+  if (!config[field]) config[field] = {};
 }
 
 module.exports = exports = config;
