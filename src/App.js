@@ -1,65 +1,34 @@
 import React, { Component } from 'react';
-import { PowerSelect } from 'react-power-select';
+import PowerInput from './components/PowerInput';
 import 'font-awesome/css/font-awesome.min.css';
 import 'react-power-select/dist/react-power-select.css';
-const request = require('request');
-const conf = require('./config');
+const sender = require('./lib/sender');
 
 class App extends Component {
 
   constructor(props, context) {
     super(props, context);
     this.state = {
-      from: undefined,
-      to: undefined,
       data: undefined,
       waitSign: false,
-      searchAdress: [],
     };
-  }
-
-  handleChange = (...s) => {
-    this.setState({
-      [ s[0] ]: s[1].option
-    })
-  }
-
-  handleSearchAddress = (...opt) => {
-    const text = opt[ 1 ].select.searchTerm;
-    // if( !text || text.length % 3 !== 0 ) return;
-    const options = {
-      uri: ( conf.backend.url || 'http://localhost:3038' ) + '/search',
-      method: 'POST',
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      json: { text },
-    };
-    request(options, (error, response, body) => {
-      if( !error && body && Array.isArray( body ) )
-      this.setState({ searchAdress: body });
-    });
   }
 
   search(e) {
     e.preventDefault();
     this.setState({ data: undefined, waitSign: true });
-    const { from, to } = this.state;
 
-    const options = {
-      uri: conf.backend.url || 'http://localhost:3038',
-      method: 'POST',
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-      json: { from, to },
-    };
+    const [ from, to ] = ['from', 'to'].map( key => this.refs[ key ].state.value )
 
-    request(options, (error, response, body) => {
-      this.setState({ waitSign: false });
-      if (!error && response.statusCode === 200)
-        this.setState({ data: body });
-      else
-        this.setState({ data: { error: error ? error.message : body } });
-    });
+    sender( { json: { from, to } },
+      (error, response, body) => {
+        this.setState({ waitSign: false });
+        if (!error && response.statusCode === 200)
+          this.setState({ data: body });
+        else
+          this.setState({ data: { error: error ? error.message : body } });
+      }
+    );
   }
 
   render() {
@@ -123,28 +92,10 @@ class App extends Component {
         <form onSubmit={this.search.bind(this)}>
             <div className="row">
                 <div className="col-md-5">
-                  <PowerSelect
-                    ref="from"
-                    name="from"
-                    options={this.state.searchAdress}
-                    selected={this.state.from}
-                    onChange={this.handleChange.bind(this, "from")}
-                    onKeyDown={this.handleSearchAddress}
-                    className="input-lg"
-                    placeholder="Start Address"
-                  />
+                  <PowerInput ref="from" placeholder="Start Address" />
                 </div>
                 <div className="col-md-5">
-                  <PowerSelect
-                    ref="to"
-                    name="to"
-                    options={this.state.searchAdress}
-                    selected={this.state.to}
-                    onChange={this.handleChange.bind(this, "to")}
-                    onKeyDown={this.handleSearchAddress}
-                    className="input-lg"
-                    placeholder="Destination Address"
-                  />
+                  <PowerInput ref="to" placeholder="Destination Address" />
                 </div>
                 <div className="col-md-2">
                     <button

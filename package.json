@@ -1,6 +1,7 @@
 {
   "name": "gruber-frontend",
-  "version": "2.0.1",
+  "version": "3.0.1",
+  "description": "Gruber frontend",
   "private": true,
   "dependencies": {
     "font-awesome": "^4.7.0",
@@ -10,6 +11,14 @@
     "react-power-select": "^1.0.0-beta.10",
     "react-scripts": "1.0.17"
   },
+  "keywords": [
+    "Gruber"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ivanoff/gruber-frontend.git"
+  },
+  "author": "Dimitry Ivanov <2@ivanoff.org.ua> # curl -A cv ivanoff.org.ua",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
